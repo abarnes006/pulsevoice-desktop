@@ -1,0 +1,36 @@
+name: Build & publish desktop installers
+
+# Builds the PulseVoice desktop app for Windows, macOS, and Linux on GitHub's
+# runners (which have the privileges electron-builder needs — local Windows
+# builds fail on the winCodeSign symlink step) and publishes them as public
+# release assets with stable names, so the website can link to
+# /releases/latest/download/PulseVoice-Setup.exe (etc.).
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - name: Build & publish installer
+        run: npx electron-builder --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Unsigned builds (no certs yet) — skip auto code-sign discovery so
+          # macOS/Windows produce installers instead of failing on signing.
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
