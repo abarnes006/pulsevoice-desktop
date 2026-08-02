@@ -29,10 +29,10 @@ if (!app.requestSingleInstanceLock()) {
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 420,
-    height: 780,
-    minWidth: 360,
-    minHeight: 600,
+    width: 1180,
+    height: 820,
+    minWidth: 900,
+    minHeight: 640,
     title: 'PulseVoice',
     backgroundColor: '#140B29', // brand night — matches the app splash
     icon: ICON,
