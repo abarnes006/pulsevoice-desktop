@@ -23,7 +23,16 @@
     "files": ["main.js", "preload.js", "build/icon.png"],
     "directories": { "output": "dist", "buildResources": "build" },
     "publish": [{ "provider": "github", "owner": "abarnes006", "repo": "pulsevoice-desktop" }],
-    "win": { "target": "nsis", "artifactName": "PulseVoice-Setup.${ext}" },
+    "win": {
+      "target": "nsis",
+      "artifactName": "PulseVoice-Setup.${ext}",
+      "azureSignOptions": {
+        "publisherName": "Pulse Payments LLC",
+        "endpoint": "https://eus.codesigning.azure.net/",
+        "codeSigningAccountName": "pulse-technologies",
+        "certificateProfileName": "pulsevoice-desktop"
+      }
+    },
     "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true },
     "mac": { "target": "dmg", "category": "public.app-category.business", "identity": null, "artifactName": "PulseVoice.${ext}" },
     "linux": { "target": "AppImage", "category": "Network", "artifactName": "PulseVoice.${ext}" }

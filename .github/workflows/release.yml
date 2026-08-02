@@ -31,6 +31,13 @@ jobs:
         run: npx electron-builder --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Unsigned builds (no certs yet) — skip auto code-sign discovery so
-          # macOS/Windows produce installers instead of failing on signing.
+          # macOS has no cert yet — skip auto code-sign discovery so it still
+          # produces an installer instead of failing on signing. Windows signs
+          # explicitly via win.azureSignOptions in package.json (Azure Artifact
+          # Signing), which ignores this flag.
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          # Azure Artifact Signing auth (Windows only; unused on mac/linux).
+          # DefaultAzureCredential picks these up automatically.
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
