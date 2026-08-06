@@ -4,13 +4,17 @@
 // even when the window is closed (like Teams/Zoom). Content is the hosted app, so
 // it auto-updates with each deploy — no desktop rebuild needed for app changes.
 
-const { app, BrowserWindow, Tray, Menu, shell, nativeImage } = require('electron');
-const path = require('node:path');
-
 // Chromium's HTTPS-SVCB DNS path can fail (-105 NAME_NOT_RESOLVED) for some hosts
 // while the OS resolver succeeds — seen on stun/turn.telnyx.com, which breaks WebRTC
 // media. Disable it so Electron resolves those hosts like the rest of the system.
-app.commandLine.appendSwitch('disable-features', 'UseDnsHttpsSvcb,UseDnsHttpsSvcbAlpn');
+// Must be pushed onto process.argv BEFORE `electron` is required: as of Electron 36,
+// app.commandLine.appendSwitch() lowercases both the switch and its value, and these
+// Chromium feature names are case-sensitive — lowercased, this switch is silently
+// ignored and the DNS bug (and the WebRTC audio breakage it causes) comes back.
+process.argv.push('--disable-features=UseDnsHttpsSvcb,UseDnsHttpsSvcbAlpn');
+
+const { app, BrowserWindow, Tray, Menu, shell, nativeImage } = require('electron');
+const path = require('node:path');
 
 const APP_URL = process.env.PULSEVOICE_APP_URL || 'https://app.pulsevoice.pulsetechnologies.ai';
 const ICON = path.join(__dirname, 'build', 'icon.png');
